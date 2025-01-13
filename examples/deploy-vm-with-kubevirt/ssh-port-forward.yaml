@@ -1,0 +1,29 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: fedora-service-ssh
+  namespace: demokubevirt
+spec:
+  selector:
+    vm.kubevirt.io/name: fedora-nginx
+  ports:
+    - protocol: TCP
+      port: 22
+      targetPort: 22
+---
+## nodeport if you need to access the vm from the IaaS network
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: fedora-ssh-nodeport
+#   namespace: demokubevirt
+# spec:
+#   selector:
+#      vm.kubevirt.io/name: fedora-nginx
+#   ports:
+#     - name: fedora-ssh-nodeport
+#       protocol: TCP
+#       port: 22
+#       targetPort: 22
+#       nodePort: 30300 #must be between 30000 and 32767 - only private lb
+#   type: NodePort

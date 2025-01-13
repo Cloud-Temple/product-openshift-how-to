@@ -1,0 +1,29 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: windows-service-rdp
+  namespace: demokubevirt
+spec:
+  selector:
+    vm.kubevirt.io/name: windows-iis
+  ports:
+    - protocol: TCP
+      port: 3389
+      targetPort: 3389
+---
+## nodeport if you need to access the vm from the IaaS network
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: windows-rdp-nodeport
+#   namespace: demokubevirt
+# spec:
+#   selector:
+#      vm.kubevirt.io/name: windows-iis
+#   ports:
+#     - name: windows-rdp-nodeport
+#       protocol: TCP
+#       port: 3389
+#       targetPort: 3389
+#       nodePort: 30002 #must be between 30000 and 32767 - only private lb
+#   type: NodePort

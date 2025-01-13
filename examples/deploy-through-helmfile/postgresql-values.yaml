@@ -1,0 +1,13 @@
+replicaCount: 1
+image:
+  registry: docker.io
+  repository: bitnami/postgresql
+  tag: 17.2.0-debian-12-r5
+  pullPolicy: IfNotPresent
+volumePermissions:
+  enabled: false
+primary:
+  persistence:
+    size: 1Gi
+service:
+  type: ClusterIP

@@ -1,0 +1,86 @@
+## This image comes from https://kodekloud.com 
+## Deployment of the webapp-color app
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webapp-color
+  name: webapp-color
+  namespace: democonsole
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webapp-color
+  template:
+    metadata:
+      labels:
+        app: webapp-color
+    spec:
+      containers:
+      - name: webapp-color
+        image: kodekloud/webapp-color
+        envFrom:
+        - configMapRef:
+            name: webapp-color
+---
+## Service to expose your pod in the cluster
+kind: Service
+apiVersion: v1
+metadata:
+  name: webapp-color
+  namespace: democonsole
+spec:
+  selector:
+    app: webapp-color
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+---
+## ConfigMap for changing site color (Requires rollout)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: webapp-color
+  namespace: democonsole
+data:
+  APP_COLOR: blue
+---
+## public route
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: webapp-color-pub
+  namespace: democonsole
+  labels:
+    ct-router-type: public
+spec:
+  host: webapp-color.apps-ocp01-{your-id}.paas.cloud-temple.com ## to edit
+  to:
+    kind: Service
+    name: webapp-color
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+---
+## private route for iaas
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: webapp-color-priv
+  namespace: democonsole
+  labels:
+    ct-router-type: private
+spec:
+  host: webapp-color.apps-priv-ocp01-{your-id}.paas.cloud-temple.com ## to edit
+  to:
+    kind: Service
+    name: webapp-color
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge

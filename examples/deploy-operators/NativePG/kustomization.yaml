@@ -1,0 +1,4 @@
+resources:
+- base/cluster-nativeng-secret.yaml
+- base/cluster-nativeng.yaml
+- base/cluster-expose-nativepg.yaml

@@ -1,0 +1,28 @@
+BASE_DIR=/opt/jmeter/${PROJECT_NAME}
+
+#TEST TYPOLOGY
+NB_USERS=50
+DURATION=120
+RAMPUP=10
+
+#SCENARIO PARAMETERS
+PARAM_USERS_ARGS="-Jthreads=${NB_USERS} -Jduration=${DURATION} -Jrampup=${RAMPUP}"
+
+#JMX FILE PATH
+JMX_FILE=/opt/jmeter/${PROJECT_NAME}/scenario/${PROJECT_NAME}.jmx
+
+#LOGS PATH
+LOGS_DIR=/opt/jmeter/${PROJECT_NAME}
+LOG_FILE=${LOGS_DIR}${PROJECT_NAME}.jtl
+RESULTS_DIR=/opt/jmeter/${PROJECT_NAME}/
+RESULT_FILE=results-lt-${PROJECT_NAME}-${NOW}.csv
+RESULTS_FILE=${RESULTS_DIR}/${RESULT_FILE}
+
+#ADDITIONAL PLUGIN PATH
+JMETER_SEARCH_PATH=${BASE_DIR}/plugins/lib/
+
+#JVM CONFIGURATION
+JVM_ARGS="$JVM_ARGS -Duser.timezone=Europe/Paris"
+JVM_ARGS="$JVM_ARGS -Djava.net.preferIPv4Stack=true -Djava.net.preferIPv6Addresses=false"
+JVM_ARGS="$JVM_ARGS -Dcom.sun.management.jmxremote.authenticate=false"
+JVM_ARGS="$JVM_ARGS -XX:+UseG1GC -XX:MaxGCPauseMillis=100 -Xms1g -Xmx1g -XX:G1ReservePercent=20 -Xss256k"

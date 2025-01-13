@@ -1,0 +1,35 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ca-secret
+  namespace: democertmanager
+data:
+  tls.crt: LS0tLS1CRUdJTixxxxxxxxxxxxxxxxxxxxxxx
+  tls.key: LS0tLS1CRUdJTixxxxxxxxxxxxxxxxxxxxxxx
+type: kubernetes.io/tls
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: cloud-temple.xy
+  namespace: democertmanager
+spec:
+  ca:
+    secretName: ca-secret
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cloud-temple.xy-myfirstcertificate
+  namespace: democertmanager
+spec:
+  secretName: example-tls
+  duration: 72h
+  renewBefore: 1h
+  commonName: web.cloud-temple.xy
+  dnsNames:
+    - example.com
+    - www.example.com
+  issuerRef:
+    name: cloud-temple.xy
+    kind: Issuer

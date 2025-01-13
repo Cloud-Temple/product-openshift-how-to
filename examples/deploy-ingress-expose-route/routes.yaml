@@ -1,0 +1,36 @@
+# These are route examples on our PaaS Offer
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: nginx
+  namespace: myproject-route
+  labels:
+    ct-router-type: public #for using public lb
+spec:
+  host: nginx.apps-ocp01-{your-id}.paas.cloud-temple.com # to edit
+  to:
+    kind: Service
+    name: nginx
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: nginx-private 
+  namespace: myproject-route
+  labels:
+    ct-router-type: private #for using private lb
+spec:
+  host: nginx.apps-priv-ocp01-{your-id}.paas.cloud-temple.com # to edit
+  to:
+    kind: Service
+    name: nginx
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge

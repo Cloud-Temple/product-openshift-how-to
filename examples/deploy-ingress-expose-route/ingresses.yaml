@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:  
+  name: nginx2-private
+  namespace: myproject-ingress 
+  labels:    
+    ct-router-type: private
+spec:  
+  ingressClassName: openshift-customer-private  #for using private lb
+  # tls:    
+  #   - hosts:        
+  #       - nginx2.apps-ocp01-{your-id}.paas.cloud-temple.com      
+  #     secretName: example-cert  
+  rules:    
+    - host: nginx2.apps-priv-ocp01-{your-id}.paas.cloud-temple.com # to edit
+      http:        
+        paths:          
+          - path: /            
+            pathType: Prefix            
+            backend:              
+              service:                
+                name: nginx2                
+                port:                  
+                  number: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:  
+  name: nginx2  
+  namespace: myproject-ingress 
+  labels:    
+    ct-router-type: public
+spec:  
+  ingressClassName: openshift-customer-public  #for using public lb
+  # tls:    
+  #   - hosts:        
+  #       - nginx2.apps-ocp01-{your-id}.paas.cloud-temple.com      
+  #     secretName: example-cert  
+  rules:    
+    - host: nginx2.apps-ocp01-{your-id}.paas.cloud-temple.com  # to edit    
+      http:        
+        paths:          
+          - path: /            
+            pathType: Prefix            
+            backend:              
+              service:                
+                name: nginx2                
+                port:                  
+                  number: 8080

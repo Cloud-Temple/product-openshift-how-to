@@ -1,0 +1,3 @@
+resources:
+- base/deployment-kubernetes-manifests-example.yaml
+- base/routes.yaml
