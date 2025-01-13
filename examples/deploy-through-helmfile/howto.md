@@ -4,7 +4,7 @@
 
 Ensure all required tools mentioned in the Software version section are installed and properly configured.
 
-- Install OpenShift CLI: [OCP CLI Guide](https://docs.OpenShift.com/container-platform/4.15/cli_reference/OpenShift_cli/getting-started-cli.html)
+- Install OpenShift CLI: [OCP CLI Guide](https://docs.redhat.com/en/documentation/openshift_container_platform/4.15/html/cli_tools/openshift-cli-oc#cli-getting-started)
 - Install Helm and Helmfile: [Helmfile Guide](https://Helmfile.readthedocs.io/en/latest/)
 
 ---
