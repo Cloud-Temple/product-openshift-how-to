@@ -1,0 +1,3 @@
+resources:
+- base/crunchy.yaml
+- base/pgadmincrunchy.yaml

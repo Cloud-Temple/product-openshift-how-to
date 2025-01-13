@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-service-node
+  namespace: demonativepg
+spec:
+  selector:
+    cnpg.io/cluster: cluster-nativeng
+    cnpg.io/instanceRole: primary
+  ports:
+    - name: postgresql
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+      nodePort: 30016
+  type: NodePort

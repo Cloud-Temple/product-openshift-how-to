@@ -1,0 +1,26 @@
+﻿apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  labels:
+    cluster: nativeng
+  name: cluster-nativeng
+  namespace: demonativepg
+spec:
+  instances: 3
+  logLevel: info
+  primaryUpdateStrategy: unsupervised
+  enableSuperuserAccess: true
+  superuserSecret:
+    name: nativeng-superuser
+  storage:
+    size: 1Gi
+  walStorage:
+    size: 1Gi
+  bootstrap:
+    initdb:
+      database: demo8
+      owner: bonanza
+      secret:
+        name: nativeng-user
+      dataChecksums: true
+      encoding: 'UTF8'

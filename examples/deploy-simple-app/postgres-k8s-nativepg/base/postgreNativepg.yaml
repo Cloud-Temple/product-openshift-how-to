@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: demonativepg
+  name: web2nativepg
+  labels:
+    app: web2nativepg
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web2nativepg
+  template:
+    metadata:
+      labels:
+        app: web2nativepg
+    spec:
+      serviceAccountName: web2nativepg
+      terminationGracePeriodSeconds: 5
+      securityContext: {}
+      containers:
+      - name: server
+        securityContext: {}
+        image: registry-ocp01-{your-id}.paas.cloud-temple.com/demonativepg/oc_2_postgres-nativeng:latest # to edit
+        ports:
+        - name: serverport
+          containerPort: 8000
+        env:
+        - name: BRAND
+          value: 'nativeng'        
+        - name: PORT
+          value: "7000"
+        - name: FLASK_DEBUG
+          value: 'True'
+        - name: DBNAME
+          value: demo8
+        - name: DBHOST
+          value: cluster-nativeng-rw.demonativepg.svc.cluster.local
+        - name: DBUSER
+          valueFrom:
+            secretKeyRef:
+              name: cluster-nativeng-demo8
+              key: DBUSER       
+        - name: DBPASS
+          valueFrom:
+            secretKeyRef:
+              name: cluster-nativeng-demo8
+              key: DBPASS          
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web2nativepg
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: demonativepg
+  name: web2nativepg
+  labels:
+    app: web2nativepg
+spec:
+  type: ClusterIP
+  selector:
+    app: web2nativepg
+  ports:
+  - name: serviceport
+    port: 8000
+    targetPort: 8000
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: frontend-route-web2nativepg
+  namespace: demonativepg
+  labels:
+    ct-router-type: public
+spec:
+  host: webnativepg.apps-ocp01-{your-id}.paas.cloud-temple.com # to edit
+  to:
+    kind: Service
+    name: web2nativepg
+    weight: 100
+  port:
+    targetPort: 8000
+  tls:
+    termination: edge

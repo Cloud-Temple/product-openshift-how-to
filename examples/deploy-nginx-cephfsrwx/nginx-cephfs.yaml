@@ -1,0 +1,68 @@
+## RWX deployment for nginx
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cephfs-rwx-pvc
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: ocs-storagecluster-cephfs
+--- 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginxinc/nginx-unprivileged:1.18
+          ports:
+            - containerPort: 80
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html
+              name: shared-data
+      volumes:
+        - name: shared-data
+          persistentVolumeClaim:
+            claimName: cephfs-rwx-pvc
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: nginx-service
+spec:
+  selector:
+    app: nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: nginx-route
+  labels:
+    ct-router-type: public
+spec:
+  host: nginxrwx.apps-ocp01-{your-id}.paas.cloud-temple.com  ## to edit
+  to:
+    kind: Service
+    name: nginx-service
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge

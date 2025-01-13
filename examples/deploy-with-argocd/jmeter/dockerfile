@@ -1,0 +1,43 @@
+FROM alpine
+
+ARG JMETER_VERSION="5.6.3"
+
+ENV PROJECT_NAME="shop"
+ENV JMETER_HOME=/opt/apache-jmeter-${JMETER_VERSION}
+ENV JMETER_BIN=${JMETER_HOME}/bin
+ENV JMETER_DOWNLOAD_URL=https://archive.apache.org/dist/jmeter/binaries/apache-jmeter-${JMETER_VERSION}.tgz
+
+RUN apk update \
+    && apk upgrade \
+    && apk add --no-cache \
+       ca-certificates \
+       openjdk17-jre \
+       tzdata \
+       curl \
+       unzip \
+       bash \
+       nss \
+    && update-ca-certificates \
+    && mkdir -p /tmp/dependencies \
+    && curl -L --silent ${JMETER_DOWNLOAD_URL} > /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz \
+    && tar -xzf /tmp/dependencies/apache-jmeter-${JMETER_VERSION}.tgz -C /opt \
+    && rm -rf /tmp/dependencies /var/cache/apk/*
+
+ENV PATH=$PATH:$JMETER_BIN
+
+WORKDIR /
+
+COPY entrypoint.sh /opt/entrypoint.sh
+COPY config /opt/config
+COPY scenario /opt/jmeter/${PROJECT_NAME}/scenario
+
+RUN mkdir -p /opt/jmeter/${PROJECT_NAME} \
+    && chmod -R 777 /opt/jmeter/${PROJECT_NAME}
+
+RUN apk add --no-cache dos2unix \
+    && dos2unix /opt/entrypoint.sh /opt/config \
+    && chmod +x /opt/entrypoint.sh \
+    && mkdir -p /opt/jmeter/sandbox \
+    && chmod -R 777 /opt/jmeter/sandbox
+
+ENTRYPOINT ["bash", "/opt/entrypoint.sh"]

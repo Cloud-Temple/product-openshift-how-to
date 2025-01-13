@@ -1,0 +1,44 @@
+apiVersion: postgres-operator.crunchydata.com/v1beta1
+kind: PostgresCluster
+metadata:
+  labels:
+    app: postgrescluster
+  name: crunchypgsql
+  namespace: democrunchy
+spec:
+  backups:
+    pgbackrest:
+      repos:
+        - volume:
+            volumeClaimSpec:
+              accessModes:
+                - ReadWriteOnce
+              resources:
+                requests:
+                  storage: 1Gi
+          name: repo1
+  instances:
+    - dataVolumeClaimSpec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
+      replicas: 1
+  postgresVersion: 15
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: crunchypgsql-service-node
+  namespace: democrunchy
+spec:
+  selector:
+    postgres-operator.crunchydata.com/role: master
+  ports:
+    - name: crunchysql
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+      nodePort: 30010 
+  type: NodePort
