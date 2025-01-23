@@ -13,14 +13,11 @@ Ensure all required tools mentioned in the Software version section are installe
 
 Authenticate with your OpenShift cluster.
 
-First way, using token authentication.
-
 ```bash
 oc login --server=https://api.openshift.example.com:6443 --web
 ```
 
->**Warning** :
-> The login command will show the internal server URL in the --server argument, which you can't resolve from your computer.
+>**Note** :
 > You will need to replace your "--server" url by :
 **"--server=<https://api-ocp><number_of_your_cluster>-<cluster_name>.paas.cloud-temple.com"**
 
@@ -109,7 +106,7 @@ oc label route nginx ct-router-type=public -n poc-Helmfile
 | nginx-tls | nginx-tls-poc-Helmfile.apps-ocp<cluster_number>-<cluster_name>.paas.cloud-temple.com               | nginx  | 8080     | edge | None        | None     | app.kubernetes.io/instance=nginx,app.kubernetes.io/managed-by=Helm,app.kubernetes.io/name=nginx,app.kubernetes.io/version=1.27.3,ct-router-type=public,Helm.sh/chart=nginx-18.2.6 |
 
 2. Access the application via the `HOST/PORT` field:
-   - `http://nginx-tls-poc-Helmfile.apps-ocp<cluster_number>-<cluster_name>.paas.cloud-temple.com`
+   - `http://nginx-poc-Helmfile.apps-ocp<cluster_number>-<cluster_name>.paas.cloud-temple.com`
    - `https://nginx-tls-poc-Helmfile.apps-ocp<cluster_number>-<cluster_name>.paas.cloud-temple.com`.
 
 ## Validation Criteria
