@@ -12,17 +12,17 @@ Here, you will find information and use cases related to deploying, managing, an
 
 To begin your journey through our platform, we recommend exploring the following:
 
-1. [**Architecture Overview**](https://docs.cloud-temple.com/paas/openshift/#architecture-generale-de-la-plateforme)
+1. [**Architecture Overview**](https://docs.cloud-temple.com/paas_openshift/concepts#architecture-g%C3%A9n%C3%A9rale-de-la-plateforme>)
    - Gain insights into the foundational structure of the platform.
    - Understand how OpenShift integrates with Cloud Temple services.
 
-2. [**Known Limitations and Constraints**](https://docs.cloud-temple.com/paas/openshift/#limites-actuelles-de-loffre-redhat-openshift-en-environnement-secnumcloud)
+2. [**Known Limitations and Constraints**](https://docs.cloud-temple.com/paas_openshift/concepts#limites-actuelles-de-loffre-redhat-openshift-en-environnement-secnumcloud)
    - Learn about the platform's boundaries to better plan your implementations.
    - Avoid common pitfalls and optimize resource usage effectively.
 
 3. **Tour Through OpenShift by Cloud Temple**
-   - Take a deep dive into the features and functionalities tailored for our deployment using our [**Quickstart guide**](https://docs.cloud-temple.com/paas/openshift/#deployer-une-plateforme-redhat-openshift-au-sein-de-votre-tenant)
-   - Explore practical use cases to fully leverage the platform's capabilities.
+   - Take a deep dive into the features and functionalities tailored for our deployment using our [**Quickstart guide**](https://docs.cloud-temple.com/paas_openshift/quickstart)
+   - [**Explore**](https://docs.cloud-temple.com/paas_openshift/tutorials) practical use cases to fully leverage the platform's capabilities.
 
 ## Repository Structure
 
@@ -37,7 +37,6 @@ We welcome contributions from the community to enhance this repository. If you h
 ## Support
 
 - **Documentation**: Begin with our detailed guides [available on our documentation](https://docs.cloud-temple.com/).
-- **FAQ**: For quick answers to common questions, visit our [FAQ page](https://docs.cloud-temple.com/faq/general/general/).
 - **Contact Support**: If you need further assistance, feel free to email us at **[contact@cloud-temple.com](mailto:contact@cloud-temple.com)** or visit our [Contact page](https://www.cloud-temple.com/contactez-nous/).
 
 ## License
