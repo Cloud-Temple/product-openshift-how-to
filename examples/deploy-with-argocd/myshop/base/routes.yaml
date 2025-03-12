@@ -1,0 +1,34 @@
+--- ##public route
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: frontend-route
+  labels:
+    ct-router-type: public
+spec:
+  host: market.apps-ocp01-{your-id}.paas.cloud-temple.com
+  to:
+    kind: Service
+    name: frontend-external
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+--- ##private route
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: frontend-route-private
+  labels:
+    ct-router-type: private
+spec:
+  host: market.apps-priv-ocp01-{your-id}.paas.cloud-temple.com
+  to:
+    kind: Service
+    name: frontend-external
+    weight: 100
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge

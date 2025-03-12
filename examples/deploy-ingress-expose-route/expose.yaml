@@ -1,0 +1,16 @@
+# This is an expose example for our PaaS Offer (Exposing is only possible for the private LB at this very moment)
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgresql-service-node # to edit
+  namespace: jdd-project2 # to edit
+spec:
+  selector:
+     statefulset.kubernetes.io/pod-name: postgresql-00-8gh8-0 # to edit
+  ports:
+    - name: postgresql # to edit
+      protocol: TCP # to edit
+      port: 5432 # to edit
+      targetPort: 5432 # to edit
+      nodePort: 30001 # # to edit - must be between 30000 and 32767 - only private lb
+  type: NodePort

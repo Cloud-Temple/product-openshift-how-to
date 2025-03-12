@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: democrunchy
+  name: web2crunchy
+  labels:
+    app: web2crunchy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web2crunchy
+  template:
+    metadata:
+      labels:
+        app: web2crunchy
+    spec:
+      serviceAccountName: web2crunchy
+      terminationGracePeriodSeconds: 5
+      securityContext: {}
+      containers:
+      - name: server
+        securityContext: {}
+        image: registry-ocp01-xxnym.paas.cloud-temple.com/democrunchy/oc_2_postgres-crunchy:latest               
+        ports:
+        - name: serverport
+          containerPort: 8000
+        env:
+        - name: BRAND
+          value: 'crunchy'        
+        - name: PORT
+          value: "7000"
+        - name: FLASK_DEBUG
+          value: 'True'
+        - name: DBNAME
+          value: demo8
+        - name: DBHOST
+          value: crunchypgsql-pods.democrunchy.svc.cluster.local
+        - name: DBUSER
+          valueFrom:
+            secretKeyRef:
+              name: crunchypgsql-pguser-crunchypgsql
+              key: user       
+        - name: DBPASS
+          valueFrom:
+            secretKeyRef:
+              name: crunchypgsql-pguser-crunchypgsql
+              key: password         
+        resources:
+          requests:
+            cpu: 100m
+            memory: 64Mi
+          limits:
+            cpu: 200m
+            memory: 128Mi
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web2crunchy
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: democrunchy
+  name: web2crunchy
+  labels:
+    app: web2crunchy
+spec:
+  type: ClusterIP
+  selector:
+    app: web2crunchy
+  ports:
+  - name: serviceport
+    port: 8000
+    targetPort: 8000
+---
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: frontend-route-web2crunchy
+  namespace: democrunchy
+  labels:
+    ct-router-type: public
+spec:
+  host: webcrunchy.apps-ocp01-xxnym.paas.cloud-temple.com
+  to:
+    kind: Service
+    name: web2crunchy
+    weight: 100
+  port:
+    targetPort: 8000
+  tls:
+    termination: edge
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: web2crunchy       

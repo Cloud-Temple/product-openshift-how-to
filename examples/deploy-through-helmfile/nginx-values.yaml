@@ -1,0 +1,25 @@
+replicaCount: 2
+image:
+  registry: docker.io
+  repository: bitnami/nginx
+  tag: 1.27.3
+  pullPolicy: IfNotPresent
+
+containerSecurityContext:
+  runAsNonRoot: true
+
+volumePermissions:
+  enabled: true
+
+nginx:
+  extraArgs: -g 'daemon off;'
+
+service:
+  type: ClusterIP
+
+volumes:
+  - name: nginx-temp
+    emptyDir: {}
+volumeMounts:
+  - name: nginx-temp
+    mountPath: /bitnami/nginx

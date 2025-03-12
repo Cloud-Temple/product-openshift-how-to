@@ -1,0 +1,30 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: fedora-service-nginx
+  namespace: demokubevirt
+spec:
+  selector:
+    vm.kubevirt.io/name: fedora-nginx
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+--- 
+kind: Route
+apiVersion: route.openshift.io/v1
+metadata:
+  name: fedora-route-nginx
+  namespace: demokubevirt
+  labels:
+    ct-router-type: public
+spec:
+  host: nginx-fedora.apps-ocp01-{your-id}.paas.cloud-temple.com  # to edit
+  to:
+    kind: Service
+    name: fedora-service-nginx
+    weight: 100
+  port:
+    targetPort: 80
+  tls:
+    termination: edge
