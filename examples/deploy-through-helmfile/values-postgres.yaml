@@ -1,0 +1,12 @@
+auth:
+  username: demo
+  password: demopassword
+  database: demo
+
+storage:
+  size: 5Gi
+  storageClassName: ocs-storagecluster-ceph-rbd
+
+image:
+  repository: ghcr.io/cloudnative-pg/postgresql
+  tag: "17.2"

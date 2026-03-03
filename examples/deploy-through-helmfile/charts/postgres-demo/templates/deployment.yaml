@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      securityContext:
+        runAsNonRoot: true
+      containers:
+        - name: postgres
+          image: {{ .Values.image.repository }}:{{ .Values.image.tag }}
+          ports:
+            - containerPort: 5432
+
+          envFrom:
+            - secretRef:
+                name: {{ .Release.Name }}-secret
+
+          env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+
+          resources:
+            limits:
+              cpu: 500m
+              memory: 512Mi
+            requests:
+              cpu: 250m
+              memory: 256Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Release.Name }}-pvc

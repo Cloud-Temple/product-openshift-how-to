@@ -1,0 +1,4 @@
+apiVersion: v2
+name: postgres-demo
+description: "PostgreSQL standard SNC compliant"
+version: 1.0.0

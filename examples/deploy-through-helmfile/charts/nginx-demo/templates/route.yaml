@@ -1,0 +1,40 @@
+---
+# Route publique HTTPS
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}-public
+  labels:
+    app: {{ .Release.Name }}
+    ct-router-type: public
+spec:
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  to:
+    kind: Service
+    name: {{ .Release.Name }}
+    weight: 100
+  wildcardPolicy: None
+---
+# Route privée HTTPS
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: {{ .Release.Name }}-private
+  labels:
+    app: {{ .Release.Name }}
+    ct-router-type: private
+spec:
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
+  to:
+    kind: Service
+    name: {{ .Release.Name }}
+    weight: 100
+  wildcardPolicy: None

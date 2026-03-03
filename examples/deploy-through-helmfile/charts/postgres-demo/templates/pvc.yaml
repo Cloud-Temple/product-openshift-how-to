@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ .Release.Name }}-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.storage.storageClassName | default "ocs-storagecluster-ceph-rbd" }}
+  resources:
+    requests:
+      storage: {{ .Values.storage.size }}
