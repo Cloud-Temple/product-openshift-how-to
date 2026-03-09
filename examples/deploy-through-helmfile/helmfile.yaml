@@ -11,5 +11,3 @@ releases:
   - name: postgres-demo
     namespace: poc-helmfile
     chart: charts/postgres-demo
-    values:
-      - values-postgres.yaml

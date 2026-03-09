@@ -36,16 +36,6 @@ Ce tutoriel démontre :
 
 ---
 
-## Prérequis
-
-- **OpenShift CLI (`oc`)** : [Installation](https://docs.openshift.com/container-platform/4.18/cli_reference/openshift_cli/getting-started-cli.html)
-- **Helm** : [Installation](https://helm.sh/docs/intro/install/)
-- **Helmfile** : [Installation](https://helmfile.readthedocs.io/en/latest/#installation)
-- Cluster OpenShift géré par Cloud Temple
-- Rôle **client admin**
-
----
-
 ## Architecture
 
 ```
@@ -70,6 +60,8 @@ Ce tutoriel démontre :
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+### Composants
+
 **Composants déployés** :
 
 - **Nginx** : Serveur web avec 2 routes (publique et privée)
@@ -77,21 +69,30 @@ Ce tutoriel démontre :
 - **Charts Helm personnalisés** : Contrôle total de la configuration
 - **SCC restricted-v2** : Sécurité OpenShift respectée
 
+### Versions des logiciels
+
+- **OpenShift CLI (`oc`)** : v4.20.8
+- **Helm** : v3.16.3
+- **Helmfile** : v1.3.2
+- **Cluster OCP** : v4.18
+- **PostgreSQL** : v17.2 - cloudnative-pg/postgresql
+- **Nginx** : v1.27-alpine - nginx-unprivileged
+
 ---
 
 ## Prérequis
 
 ### Outils CLI
 
-- **OpenShift CLI (`oc`)** : v4.20.8+
-- **Helm** : v3.16.3+
-- **Helmfile** : v1.3.2+
+- **OpenShift CLI (`oc`)** : [Installation](https://docs.openshift.com/container-platform/4.18/cli_reference/openshift_cli/getting-started-cli.html)
+- **Helm** : [Installation](https://helm.sh/docs/intro/install/)
+- **Helmfile** : [Installation](https://helmfile.readthedocs.io/en/latest/#installation)
 
 ### Environnement
 
-- Cluster OpenShift v4.18+ géré par Cloud Temple
-- StorageClass `ocs-storagecluster-ceph-rbd` disponible
+- Cluster OpenShift fonctionnel géré par Cloud Temple
 - Rôle **client admin** pour créer des projets
+- StorageClass `ocs-storagecluster-ceph-rbd` disponible
 
 ---
 
@@ -105,13 +106,16 @@ Les fichiers de configuration sont disponibles dans le repository :
 - **`values-nginx.yaml`** : Configuration Nginx (image, ressources)
 - **`values-postgres.yaml`** : Configuration PostgreSQL (auth, storage, image)
 
-**Points clés** :
+### Points clés
 
-- Charts locaux pour un contrôle total
-- Fichiers de valeurs séparés par application
 - Image nginx-unprivileged compatible SCC restricted-v2
 - Image CloudNativePG PostgreSQL publique
 - Stockage persistant sur Ceph RBD
+- `helmfile.yaml` Pas de création de namespaces via Helmfile
+```yaml
+helmDefaults:
+  createNamespace: false
+```
 
 ---
 
@@ -120,8 +124,11 @@ Les fichiers de configuration sont disponibles dans le repository :
 ### 1. Connexion au cluster
 
 ```bash
-oc login --server=https://api-ocp01-xxx.paas.cloud-temple.com:6443 --web
+oc login --server=https://api.openshift.example.com --web
 ```
+
+> **Attention** :
+> Modifiez `--server=url` avec l'url api de votre cluster Cloud Temple PaaS, récupérable depuis la console Cloud Temple/Shiva.
 
 ### 2. Créer le namespace
 
@@ -200,21 +207,6 @@ NAME                STATUS   VOLUME      CAPACITY   STORAGECLASS
 postgres-demo-pvc   Bound    pvc-xxx     5Gi        ocs-storagecluster-ceph-rbd
 ```
 
-### Vérifier le SCC
-
-```bash
-oc get pod -n poc-helmfile -o jsonpath='{range .items[*]}{.metadata.name}{"\t"}{.metadata.annotations.openshift\.io/scc}{"\n"}{end}'
-```
-
-**Sortie attendue** :
-
-```
-nginx-demo-xxx        restricted-v2
-postgres-demo-xxx     restricted-v2
-```
-
-> **Note** : Les UIDs sont automatiquement assignés par OpenShift (> 30000) conformément au SCC restricted-v2.
-
 ---
 
 ## Tests
@@ -289,31 +281,6 @@ oc logs job/postgres-test -n poc-helmfile
    VALIDATION POC RÉUSSIE !
 ==========================================
 ```
-
----
-
-## Validation
-
-### Checklist de validation
-
-**Déploiement**
-
-- [ ] Les deux pods sont en état `Running`
-- [ ] Les 2 routes Nginx sont créées (publique + privée)
-- [ ] Le PVC PostgreSQL est en état `Bound`
-
-**Sécurité**
-
-- [ ] SCC `restricted-v2` appliqué aux deux pods
-- [ ] UIDs > 30000 (assignés automatiquement)
-- [ ] Aucun privilège root utilisé
-
-**Fonctionnalité**
-
-- [ ] Nginx accessible via route publique (HTTPS)
-- [ ] Nginx accessible via route privée (réseau interne)
-- [ ] PostgreSQL démarre sans erreur
-- [ ] Job de test PostgreSQL réussit (10/10 tests)
 
 ---
 

@@ -1,4 +1,4 @@
 apiVersion: v2
 name: postgres-demo
-description: "PostgreSQL standard SNC compliant"
+description: "PostgresSQL - PaaS OCP compliant - Cloud Temple POC"
 version: 1.0.0

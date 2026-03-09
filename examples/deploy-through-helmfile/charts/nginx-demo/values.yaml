@@ -1,0 +1,22 @@
+replicaCount: 1
+
+cluster_name: "default_cluster"
+domain: "paas.cloud-temple.com"
+
+private_domain: "apps-priv-{{ .Values.cluster_name }}.{{ .Values.domain }}"
+
+image:
+  repository: nginxinc/nginx-unprivileged
+  tag: "1.27-alpine"
+  pullPolicy: IfNotPresent
+
+service:
+  port: 8080
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 50m
+    memory: 64Mi

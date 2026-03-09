@@ -41,31 +41,27 @@ spec:
           psql -h postgres-demo -U demo -d demo -c "SELECT COUNT(*) as total_lignes, SUM(valeur) as somme_valeurs, AVG(valeur) as moyenne FROM test_poc;" || exit 1
           echo ""
 
-          echo "6. Vérification de la persistance des données..."
-          COUNT=$(psql -h postgres-demo -U demo -d demo -t -c "SELECT COUNT(*) FROM test_poc;")
-          echo "Nombre de lignes dans la table : $COUNT"
-          if [ "$COUNT" -ge 5 ]; then
-            echo "✅ Les données sont bien persistées !"
-          else
-            echo "❌ Problème de persistance des données"
-            exit 1
-          fi
-          echo ""
-
-          echo "7. Statistiques de la base de données..."
+          echo "6. Statistiques de la base de données..."
           psql -h postgres-demo -U demo -d demo -c "SELECT pg_database.datname, pg_size_pretty(pg_database_size(pg_database.datname)) AS size FROM pg_database ORDER BY pg_database_size(pg_database.datname) DESC;" || exit 1
           echo ""
 
-          echo "8. Vérification du stockage (PVC)..."
+          echo "7. Vérification du stockage (PVC)..."
           psql -h postgres-demo -U demo -d demo -c "SELECT pg_size_pretty(pg_database_size('demo')) AS taille_base_demo;" || exit 1
           echo ""
 
-          echo "9. Test de mise à jour des données..."
+          echo "8. Test de mise à jour des données..."
           psql -h postgres-demo -U demo -d demo -c "UPDATE test_poc SET valeur = valeur * 2 WHERE id <= 3;" || exit 1
           echo "✅ Mise à jour réussie !"
           echo ""
 
-          echo "10. Vérification des données mises à jour..."
+          echo "9. Vérification des données mises à jour..."
+          UPDATED_SUM=$(psql -h postgres-demo -U demo -d demo -t -c "SELECT SUM(valeur) FROM test_poc WHERE id <= 3;" | xargs)
+          if [ "$UPDATED_SUM" = "1200" ]; then
+            echo "✅ Mise à jour confirmée (somme des valeurs id 1,2,3 = 1200 au lieu de 600) !"
+          else
+            echo "❌ Problème lors de la vérification de la mise à jour (somme obtenue: $UPDATED_SUM)"
+            exit 1
+          fi
           psql -h postgres-demo -U demo -d demo -c "SELECT id, nom, valeur FROM test_poc ORDER BY id;" || exit 1
           echo ""
 
@@ -79,7 +75,7 @@ spec:
           echo "  - Insertion de données : OK"
           echo "  - Lecture de données : OK"
           echo "  - Requêtes SQL complexes : OK"
-          echo "  - Persistance des données : OK"
+          echo "  - Statistiques base de données : OK"
           echo "  - Mise à jour des données : OK"
           echo "  - Stockage PVC fonctionnel : OK"
           echo ""
