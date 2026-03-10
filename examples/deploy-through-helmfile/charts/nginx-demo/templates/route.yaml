@@ -19,6 +19,7 @@ spec:
     weight: 100
   wildcardPolicy: None
 ---
+{{- if .Values.create_private_route }}
 # Route privée HTTPS
 apiVersion: route.openshift.io/v1
 kind: Route
@@ -39,3 +40,4 @@ spec:
     name: {{ .Release.Name }}
     weight: 100
   wildcardPolicy: None
+{{- end }}

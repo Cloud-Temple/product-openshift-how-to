@@ -29,10 +29,15 @@ Ce tutoriel démontre :
 * Pas de déploiement au niveau du cluster (**installation cluster-wide**).
 * Pas de **création de namespaces** via Helmfile (pour éviter des conflits de permissions).
 
-### Labels Cloud Temple
+### Routage Cloud Temple (Exposition)
 
-- `ct-router-type: public` : Route accessible depuis Internet
-- `ct-router-type: private` : Route accessible uniquement depuis le réseau interne
+L'exposition des routes dépend de contraintes spécifiques à Cloud Temple :
+
+- **Route Publique** (accessible depuis Internet) :
+  - Doit porter le label `ct-router-type: public`
+- **Route Privée** (accessible uniquement depuis le réseau interne) :
+  - Doit porter le label `ct-router-type: private`
+  - **Contrainte de domaine** : Le champ `host` de la route doit obligatoirement correspondre au format de l'Ingress Controller privé : `*.apps-priv-<votre_cluster>.paas.cloud-temple.com` sans quoi elle ne sera pas routée. *(Voir [Configuration de la route privée](#configuration-de-la-route-privée))*
 
 ---
 
@@ -112,9 +117,27 @@ Les fichiers de configuration sont disponibles dans le repository :
 - Image CloudNativePG PostgreSQL publique
 - Stockage persistant sur Ceph RBD
 - `helmfile.yaml` Pas de création de namespaces via Helmfile
+
 ```yaml
 helmDefaults:
   createNamespace: false
+```
+
+- Route privée désactivée par défaut, activable et configurable via `values-nginx.yaml`
+
+### Configuration de la route privée
+
+Par défaut, seule la route publique est activée. Pour exposer votre application sur le réseau interne, vous devez activer la route privée dans votre fichier de surcharge (ex: `values-nginx.yaml`).
+
+**Important** : Le nom d'hôte (`host`) de la route privée doit obligatoirement correspondre au format `apps-priv-{{ cluster_name }}.paas.cloud-temple.com` pour être correctement routé par l'Ingress Controller privé.
+
+Pour cela, surchargez les valeurs suivantes dans votre `values-nginx.yaml` :
+
+```yaml
+create_private_route: true
+# Remplacez "{number}" par le numéro de votre cluster et "{cluster}" par l'ID de votre cluster
+# exemple: "ocp01-xxxxx"
+cluster_name: "ocp{number}-{cluster}"
 ```
 
 ---
@@ -252,11 +275,10 @@ oc logs job/postgres-test -n poc-helmfile
 3. Insertion de données
 4. Lecture de données
 5. Requêtes SQL complexes (agrégations)
-6. Vérification de la persistance
-7. Statistiques de la base
-8. Vérification du stockage PVC
-9. Mise à jour de données
-10. Vérification des mises à jour
+6. Statistiques de la base
+7. Vérification du stockage PVC
+8. Mise à jour de données
+9. Vérification des mises à jour
 
 **Sortie attendue** :
 
@@ -270,7 +292,7 @@ oc logs job/postgres-test -n poc-helmfile
 
 [...]
 
-10. Vérification des données mises à jour...
+9. Vérification des données mises à jour...
  id |  nom   | valeur
 ----+--------+--------
   1 | Test 1 |    200

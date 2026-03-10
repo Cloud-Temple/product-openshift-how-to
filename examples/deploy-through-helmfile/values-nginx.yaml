@@ -1,1 +1,5 @@
-cluster_name: "ocp01-acpvx"
+# create_private_route: true
+
+# cluster_name: ocp{number}-{cluster}
+# Remplacez "{number}" par le numéro de votre cluster et "{cluster}" par l'ID de votre cluster
+# cluster_name: "ocp01-xxxxx"

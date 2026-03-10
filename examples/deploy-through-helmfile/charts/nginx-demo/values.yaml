@@ -1,5 +1,7 @@
 replicaCount: 1
 
+create_private_route: false
+
 cluster_name: "default_cluster"
 domain: "paas.cloud-temple.com"
 
